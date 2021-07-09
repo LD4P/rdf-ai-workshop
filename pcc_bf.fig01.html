@@ -1,0 +1,213 @@
+<html>
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis.css" type="text/css" />
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis-network.min.js"> </script>
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+
+<style type="text/css">
+
+        #mynetwork {
+            width: 500px;
+            height: 500px;
+            background-color: #ffffff;
+            border: 1px solid lightgray;
+            position: relative;
+            float: left;
+        }
+
+        
+        #loadingBar {
+            position:absolute;
+            top:0px;
+            left:0px;
+            width: 500px;
+            height: 500px;
+            background-color:rgba(200,200,200,0.8);
+            -webkit-transition: all 0.5s ease;
+            -moz-transition: all 0.5s ease;
+            -ms-transition: all 0.5s ease;
+            -o-transition: all 0.5s ease;
+            transition: all 0.5s ease;
+            opacity:1;
+        }
+
+        #bar {
+            position:absolute;
+            top:0px;
+            left:0px;
+            width:20px;
+            height:20px;
+            margin:auto auto auto auto;
+            border-radius:11px;
+            border:2px solid rgba(30,30,30,0.05);
+            background: rgb(0, 173, 246); /* Old browsers */
+            box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+        }
+
+        #border {
+            position:absolute;
+            top:10px;
+            left:10px;
+            width:500px;
+            height:23px;
+            margin:auto auto auto auto;
+            box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+            border-radius:10px;
+        }
+
+        #text {
+            position:absolute;
+            top:8px;
+            left:530px;
+            width:30px;
+            height:50px;
+            margin:auto auto auto auto;
+            font-size:22px;
+            color: #000000;
+        }
+
+        div.outerBorder {
+            position:relative;
+            top:400px;
+            width:600px;
+            height:44px;
+            margin:auto auto auto auto;
+            border:8px solid rgba(0,0,0,0.1);
+            background: rgb(252,252,252); /* Old browsers */
+            background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+            background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+            background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+            border-radius:72px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+        }
+        
+
+        
+
+        
+</style>
+
+</head>
+
+<body>
+<div id = "mynetwork"></div>
+
+<div id="loadingBar">
+    <div class="outerBorder">
+        <div id="text">0%</div>
+        <div id="border">
+            <div id="bar"></div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    // initialize global variables.
+    var edges;
+    var nodes;
+    var network; 
+    var container;
+    var options, data;
+
+    
+    // This method is responsible for drawing the graph, returns the drawn network
+    function drawGraph() {
+        var container = document.getElementById('mynetwork');
+        
+        
+
+        // parsing and collecting nodes and edges from the python
+        nodes = new vis.DataSet([{"id": 0, "label": "\u003chttps://api.stage.sinopia.io/resource/489c7fef-b725-4765-a60e-e7fbfade7918\u003e", "shape": "dot", "title": "\u003chttps://api.stage.sinopia.io/resource/489c7fef-b725-4765-a60e-e7fbfade7918\u003e"}, {"id": 1, "label": "_:b71", "shape": "dot", "title": "_:b71"}, {"id": 2, "label": "pcc:bf2:Monograph:Work", "shape": "dot", "title": "pcc:bf2:Monograph:Work"}, {"id": 3, "label": "\u003chttp://id.loc.gov/vocabulary/contentTypes/txt\u003e", "shape": "dot", "title": "\u003chttp://id.loc.gov/vocabulary/contentTypes/txt\u003e"}, {"id": 4, "label": "\u003chttps://api.stage.sinopia.io/resource/18da6c93-b005-479d-a86d-ea8c23746828\u003e", "shape": "dot", "title": "\u003chttps://api.stage.sinopia.io/resource/18da6c93-b005-479d-a86d-ea8c23746828\u003e"}, {"id": 5, "label": "1980", "shape": "dot", "title": "1980"}, {"id": 6, "label": "_:b42", "shape": "dot", "title": "_:b42"}, {"id": 7, "label": "The Cambridge encyclopedia of archaeology", "shape": "dot", "title": "The Cambridge encyclopedia of archaeology"}, {"id": 8, "label": "\u003chttps://api.stage.sinopia.io/resource/ab56952c-db3c-4179-b913-d2014676d190\u003e", "shape": "dot", "title": "\u003chttps://api.stage.sinopia.io/resource/ab56952c-db3c-4179-b913-d2014676d190\u003e"}, {"id": 9, "label": "_:b31", "shape": "dot", "title": "_:b31"}, {"id": 10, "label": "\u003chttps://api.stage.sinopia.io/resource/6eea39a3-aa07-43fa-8cc0-9c9192b484b9\u003e", "shape": "dot", "title": "\u003chttps://api.stage.sinopia.io/resource/6eea39a3-aa07-43fa-8cc0-9c9192b484b9\u003e"}, {"id": 11, "label": "\u003chttps://api.stage.sinopia.io/resource/7b17c000-56e9-43a0-b884-6b377ff4755c\u003e", "shape": "dot", "title": "\u003chttps://api.stage.sinopia.io/resource/7b17c000-56e9-43a0-b884-6b377ff4755c\u003e"}, {"id": 12, "label": "2022-07-08", "shape": "dot", "title": "2022-07-08"}, {"id": 13, "label": "bf:AdminMetadata", "shape": "dot", "title": "bf:AdminMetadata"}, {"id": 14, "label": "\u003chttp://id.loc.gov/vocabulary/issuance/mono\u003e", "shape": "dot", "title": "\u003chttp://id.loc.gov/vocabulary/issuance/mono\u003e"}, {"id": 15, "label": "single unit", "shape": "dot", "title": "single unit"}, {"id": 16, "label": "_:b64", "shape": "dot", "title": "_:b64"}, {"id": 17, "label": "Cambridge encyclopedia of archaeology", "shape": "dot", "title": "Cambridge encyclopedia of archaeology"}, {"id": 18, "label": "\u003chttp://id.loc.gov/vocabulary/organizations/cst\u003e", "shape": "dot", "title": "\u003chttp://id.loc.gov/vocabulary/organizations/cst\u003e"}, {"id": 19, "label": "editor, Andrew Sherratt", "shape": "dot", "title": "editor, Andrew Sherratt"}, {"id": 20, "label": "bf:Work", "shape": "dot", "title": "bf:Work"}, {"id": 21, "label": "\u003chttp://id.loc.gov/vocabulary/millus/map\u003e", "shape": "dot", "title": "\u003chttp://id.loc.gov/vocabulary/millus/map\u003e"}, {"id": 22, "label": "\u003chttp://id.loc.gov/authorities/subjects/sh85080302\u003e", "shape": "dot", "title": "\u003chttp://id.loc.gov/authorities/subjects/sh85080302\u003e"}, {"id": 23, "label": "Prehistoric peoples@en", "shape": "dot", "title": "Prehistoric peoples@en"}, {"id": 24, "label": "\u003chttp://id.loc.gov/vocabulary/relators/edt\u003e", "shape": "dot", "title": "\u003chttp://id.loc.gov/vocabulary/relators/edt\u003e"}, {"id": 25, "label": "Editor", "shape": "dot", "title": "Editor"}, {"id": 26, "label": "_:b49", "shape": "dot", "title": "_:b49"}, {"id": 27, "label": "Includes bibliographical references (pages 453-465) and index", "shape": "dot", "title": "Includes bibliographical references (pages 453-465) and index"}, {"id": 28, "label": "_:b70", "shape": "dot", "title": "_:b70"}, {"id": 29, "label": "_:b45", "shape": "dot", "title": "_:b45"}, {"id": 30, "label": "\u003chttp://id.loc.gov/authorities/names/n82051454\u003e", "shape": "dot", "title": "\u003chttp://id.loc.gov/authorities/names/n82051454\u003e"}, {"id": 31, "label": "Crown Publishers@en", "shape": "dot", "title": "Crown Publishers@en"}, {"id": 32, "label": "_:b50", "shape": "dot", "title": "_:b50"}, {"id": 33, "label": "bf:Extent", "shape": "dot", "title": "bf:Extent"}, {"id": 34, "label": "_:b46", "shape": "dot", "title": "_:b46"}, {"id": 35, "label": "0517534975", "shape": "dot", "title": "0517534975"}, {"id": 36, "label": "bf:Note", "shape": "dot", "title": "bf:Note"}, {"id": 37, "label": "_:b43", "shape": "dot", "title": "_:b43"}, {"id": 38, "label": "\u003chttp://id.loc.gov/authorities/names/n79007751\u003e", "shape": "dot", "title": "\u003chttp://id.loc.gov/authorities/names/n79007751\u003e"}, {"id": 39, "label": "\u003chttp://id.loc.gov/vocabulary/languages/eng\u003e", "shape": "dot", "title": "\u003chttp://id.loc.gov/vocabulary/languages/eng\u003e"}, {"id": 40, "label": "_:b65", "shape": "dot", "title": "_:b65"}, {"id": 41, "label": "bf:Summary", "shape": "dot", "title": "bf:Summary"}, {"id": 42, "label": "_:Ne10b4ab811b245d9905c9bd34ff64ff0", "shape": "dot", "title": "_:Ne10b4ab811b245d9905c9bd34ff64ff0"}, {"id": 43, "label": "\u003chttp://id.loc.gov/vocabulary/mcolor/mix\u003e", "shape": "dot", "title": "\u003chttp://id.loc.gov/vocabulary/mcolor/mix\u003e"}, {"id": 44, "label": "mixed color", "shape": "dot", "title": "mixed color"}, {"id": 45, "label": "_:b47", "shape": "dot", "title": "_:b47"}, {"id": 46, "label": "bf:Instance", "shape": "dot", "title": "bf:Instance"}, {"id": 47, "label": "https://api.stage.sinopia.io/resource/18da6c93-b005-479d-a86d-ea8c23746828", "shape": "dot", "title": "https://api.stage.sinopia.io/resource/18da6c93-b005-479d-a86d-ea8c23746828"}, {"id": 48, "label": "_:Ndfd959f23cfb4537bed62f3ec2705457", "shape": "dot", "title": "_:Ndfd959f23cfb4537bed62f3ec2705457"}, {"id": 49, "label": "rdf:nil", "shape": "dot", "title": "rdf:nil"}, {"id": 50, "label": "bf:Isbn", "shape": "dot", "title": "bf:Isbn"}, {"id": 51, "label": "gdegroat", "shape": "dot", "title": "gdegroat"}, {"id": 52, "label": "_:b48", "shape": "dot", "title": "_:b48"}, {"id": 53, "label": "bf:Source", "shape": "dot", "title": "bf:Source"}, {"id": 54, "label": "\u003chttp://id.loc.gov/authorities/names/n79035577\u003e", "shape": "dot", "title": "\u003chttp://id.loc.gov/authorities/names/n79035577\u003e"}, {"id": 55, "label": "Sherratt, Andrew, 1946-2006@en", "shape": "dot", "title": "Sherratt, Andrew, 1946-2006@en"}, {"id": 56, "label": "https://api.stage.sinopia.io/resource/7b17c000-56e9-43a0-b884-6b377ff4755c", "shape": "dot", "title": "https://api.stage.sinopia.io/resource/7b17c000-56e9-43a0-b884-6b377ff4755c"}, {"id": 57, "label": "_:b63", "shape": "dot", "title": "_:b63"}, {"id": 58, "label": "pcc:bf2:Monograph:Item", "shape": "dot", "title": "pcc:bf2:Monograph:Item"}, {"id": 59, "label": "\u003chttp://id.loc.gov/authorities/genreForms/gf2014026165\u003e", "shape": "dot", "title": "\u003chttp://id.loc.gov/authorities/genreForms/gf2014026165\u003e"}, {"id": 60, "label": "pcc:bf2:Monograph:Instance", "shape": "dot", "title": "pcc:bf2:Monograph:Instance"}, {"id": 61, "label": "New York :  Crown Publishers, 1980", "shape": "dot", "title": "New York :  Crown Publishers, 1980"}, {"id": 62, "label": "foreword by Grahame Clark", "shape": "dot", "title": "foreword by Grahame Clark"}, {"id": 63, "label": "bf:Publication", "shape": "dot", "title": "bf:Publication"}, {"id": 64, "label": "_:b69", "shape": "dot", "title": "_:b69"}, {"id": 65, "label": "bf:ClassificationLcc", "shape": "dot", "title": "bf:ClassificationLcc"}, {"id": 66, "label": "pcc:bf2:AdminMetadata", "shape": "dot", "title": "pcc:bf2:AdminMetadata"}, {"id": 67, "label": "bf:Text", "shape": "dot", "title": "bf:Text"}, {"id": 68, "label": "bf:Title", "shape": "dot", "title": "bf:Title"}, {"id": 69, "label": "\u003chttp://id.loc.gov/vocabulary/descriptionConventions/rda\u003e", "shape": "dot", "title": "\u003chttp://id.loc.gov/vocabulary/descriptionConventions/rda\u003e"}, {"id": 70, "label": "_:b44", "shape": "dot", "title": "_:b44"}, {"id": 71, "label": "\u003chttp://id.loc.gov/vocabulary/relators/pbl\u003e", "shape": "dot", "title": "\u003chttp://id.loc.gov/vocabulary/relators/pbl\u003e"}, {"id": 72, "label": "\u003chttp://id.loc.gov/vocabulary/millus/ill\u003e", "shape": "dot", "title": "\u003chttp://id.loc.gov/vocabulary/millus/ill\u003e"}, {"id": 73, "label": "Illustrations", "shape": "dot", "title": "Illustrations"}, {"id": 74, "label": "_:N69eaaee7f1a64495ae79ab258212ba3a", "shape": "dot", "title": "_:N69eaaee7f1a64495ae79ab258212ba3a"}, {"id": 75, "label": "\u003chttp://id.loc.gov/authorities/subjects/sh85006507\u003e", "shape": "dot", "title": "\u003chttp://id.loc.gov/authorities/subjects/sh85006507\u003e"}, {"id": 76, "label": "\u003chttp://id.loc.gov/vocabulary/carriers/nc\u003e", "shape": "dot", "title": "\u003chttp://id.loc.gov/vocabulary/carriers/nc\u003e"}, {"id": 77, "label": "\u003chttp://id.loc.gov/vocabulary/marcauthen/pcc\u003e", "shape": "dot", "title": "\u003chttp://id.loc.gov/vocabulary/marcauthen/pcc\u003e"}, {"id": 78, "label": "Program for Cooperative Cataloging", "shape": "dot", "title": "Program for Cooperative Cataloging"}, {"id": 79, "label": "\u003chttp://id.loc.gov/vocabulary/menclvl/f\u003e", "shape": "dot", "title": "\u003chttp://id.loc.gov/vocabulary/menclvl/f\u003e"}, {"id": 80, "label": "27 cm", "shape": "dot", "title": "27 cm"}, {"id": 81, "label": "_:b51", "shape": "dot", "title": "_:b51"}, {"id": 82, "label": "\u003chttp://id.loc.gov/ontologies/bflc/Relationship\u003e", "shape": "dot", "title": "\u003chttp://id.loc.gov/ontologies/bflc/Relationship\u003e"}, {"id": 83, "label": "bf:Contribution", "shape": "dot", "title": "bf:Contribution"}, {"id": 84, "label": "Includes bibliographical references and index", "shape": "dot", "title": "Includes bibliographical references and index"}, {"id": 85, "label": "\u003chttp://id.loc.gov/vocabulary/mediaTypes/n\u003e", "shape": "dot", "title": "\u003chttp://id.loc.gov/vocabulary/mediaTypes/n\u003e"}, {"id": 86, "label": "unmediated", "shape": "dot", "title": "unmediated"}, {"id": 87, "label": "_:b62", "shape": "dot", "title": "_:b62"}, {"id": 88, "label": "\u003chttp://id.loc.gov/authorities/names/n2009053744\u003e", "shape": "dot", "title": "\u003chttp://id.loc.gov/authorities/names/n2009053744\u003e"}, {"id": 89, "label": "bf:Person", "shape": "dot", "title": "bf:Person"}, {"id": 90, "label": "Latin", "shape": "dot", "title": "Latin"}, {"id": 91, "label": "bf:Print", "shape": "dot", "title": "bf:Print"}, {"id": 92, "label": "bf:Agent", "shape": "dot", "title": "bf:Agent"}, {"id": 93, "label": "Archaeology@en", "shape": "dot", "title": "Archaeology@en"}, {"id": 94, "label": "full", "shape": "dot", "title": "full"}, {"id": 95, "label": "4036929", "shape": "dot", "title": "4036929"}, {"id": 96, "label": "English", "shape": "dot", "title": "English"}, {"id": 97, "label": "CC165", "shape": "dot", "title": "CC165"}, {"id": 98, "label": "\u00a91980", "shape": "dot", "title": "\u00a91980"}, {"id": 99, "label": "Maps", "shape": "dot", "title": "Maps"}, {"id": 100, "label": "https://api.stage.sinopia.io/resource/6eea39a3-aa07-43fa-8cc0-9c9192b484b9", "shape": "dot", "title": "https://api.stage.sinopia.io/resource/6eea39a3-aa07-43fa-8cc0-9c9192b484b9"}, {"id": 101, "label": "495 pages", "shape": "dot", "title": "495 pages"}, {"id": 102, "label": "New York (N.Y.)@en", "shape": "dot", "title": "New York (N.Y.)@en"}, {"id": 103, "label": "bf:Item", "shape": "dot", "title": "bf:Item"}, {"id": 104, "label": "Publisher", "shape": "dot", "title": "Publisher"}, {"id": 105, "label": "bf:Local", "shape": "dot", "title": "bf:Local"}, {"id": 106, "label": "78016232", "shape": "dot", "title": "78016232"}, {"id": 107, "label": "\u003chttp://id.loc.gov/authorities/subjects/sh85026433\u003e", "shape": "dot", "title": "\u003chttp://id.loc.gov/authorities/subjects/sh85026433\u003e"}, {"id": 108, "label": "Civilization, Ancient@en", "shape": "dot", "title": "Civilization, Ancient@en"}, {"id": 109, "label": ".C3 1980b", "shape": "dot", "title": ".C3 1980b"}, {"id": 110, "label": "Also issued online", "shape": "dot", "title": "Also issued online"}, {"id": 111, "label": "Clark, Grahame, 1907-1995@en", "shape": "dot", "title": "Clark, Grahame, 1907-1995@en"}, {"id": 112, "label": "Resource Description and Access", "shape": "dot", "title": "Resource Description and Access"}, {"id": 113, "label": "bf:Lccn", "shape": "dot", "title": "bf:Lccn"}, {"id": 114, "label": "volume", "shape": "dot", "title": "volume"}, {"id": 115, "label": "bf:Script", "shape": "dot", "title": "bf:Script"}, {"id": 116, "label": "bf:SupplementaryContent", "shape": "dot", "title": "bf:SupplementaryContent"}, {"id": 117, "label": "OCLC", "shape": "dot", "title": "OCLC"}, {"id": 118, "label": "Reference works@en", "shape": "dot", "title": "Reference works@en"}, {"id": 119, "label": "bf:ShelfMarkLcc", "shape": "dot", "title": "bf:ShelfMarkLcc"}, {"id": 120, "label": "CC165 .C3 1980b", "shape": "dot", "title": "CC165 .C3 1980b"}, {"id": 121, "label": "A global survey of the development of man up to medieval times which includes new discoveries and dating methods. Each chapter is written by a specialist in that region and period.", "shape": "dot", "title": "A global survey of the development of man up to medieval times which includes new discoveries and dating methods. Each chapter is written by a specialist in that region and period."}]);
+        edges = new vis.DataSet([{"from": 0, "label": "bf:supplementaryContent", "to": 1}, {"from": 0, "label": "sinopia:hasResourceTemplate", "to": 2}, {"from": 0, "label": "bf:content", "to": 3}, {"from": 0, "label": "bf:adminMetadata", "to": 4}, {"from": 0, "label": "bf:originDate", "to": 5}, {"from": 6, "label": "bf:mainTitle", "to": 7}, {"from": 8, "label": "bf:shelfMark", "to": 9}, {"from": 10, "label": "bf:title", "to": 6}, {"from": 11, "label": "bf:creationDate", "to": 12}, {"from": 11, "label": "rdf:type", "to": 13}, {"from": 14, "label": "rdfs:label", "to": 15}, {"from": 16, "label": "rdfs:label", "to": 17}, {"from": 4, "label": "bf:source", "to": 18}, {"from": 10, "label": "bf:responsibilityStatement", "to": 19}, {"from": 0, "label": "rdf:type", "to": 20}, {"from": 0, "label": "bf:illustrativeContent", "to": 21}, {"from": 22, "label": "rdfs:label", "to": 23}, {"from": 0, "label": "bf:title", "to": 16}, {"from": 24, "label": "rdfs:label", "to": 25}, {"from": 26, "label": "rdfs:label", "to": 27}, {"from": 0, "label": "bf:notation", "to": 28}, {"from": 10, "label": "bf:identifiedBy", "to": 29}, {"from": 30, "label": "rdfs:label", "to": 31}, {"from": 32, "label": "rdf:type", "to": 33}, {"from": 34, "label": "rdf:value", "to": 35}, {"from": 26, "label": "rdf:type", "to": 36}, {"from": 37, "label": "bf:place", "to": 38}, {"from": 4, "label": "bf:descriptionLanguage", "to": 39}, {"from": 40, "label": "rdf:type", "to": 41}, {"from": 42, "label": "rdf:first", "to": 22}, {"from": 10, "label": "bf:adminMetadata", "to": 11}, {"from": 43, "label": "rdfs:label", "to": 44}, {"from": 10, "label": "bf:identifiedBy", "to": 45}, {"from": 10, "label": "rdf:type", "to": 46}, {"from": 4, "label": "rdfs:label", "to": 47}, {"from": 0, "label": "bf:summary", "to": 40}, {"from": 48, "label": "rdf:rest", "to": 49}, {"from": 34, "label": "rdf:type", "to": 50}, {"from": 4, "label": "\u003chttp://id.loc.gov/ontologies/bflc/catalogerId\u003e", "to": 51}, {"from": 52, "label": "rdf:type", "to": 53}, {"from": 54, "label": "rdfs:label", "to": 55}, {"from": 11, "label": "rdfs:label", "to": 56}, {"from": 57, "label": "bf:role", "to": 24}, {"from": 8, "label": "sinopia:hasResourceTemplate", "to": 58}, {"from": 0, "label": "bf:genreForm", "to": 59}, {"from": 8, "label": "bf:heldBy", "to": 18}, {"from": 10, "label": "sinopia:hasResourceTemplate", "to": 60}, {"from": 10, "label": "bf:provisionActivityStatement", "to": 61}, {"from": 10, "label": "bf:responsibilityStatement", "to": 62}, {"from": 37, "label": "rdf:type", "to": 63}, {"from": 37, "label": "bf:date", "to": 5}, {"from": 64, "label": "rdf:type", "to": 65}, {"from": 11, "label": "sinopia:hasResourceTemplate", "to": 66}, {"from": 0, "label": "rdf:type", "to": 67}, {"from": 6, "label": "rdf:type", "to": 68}, {"from": 11, "label": "bf:source", "to": 18}, {"from": 4, "label": "bf:descriptionConventions", "to": 69}, {"from": 70, "label": "bf:role", "to": 71}, {"from": 72, "label": "rdfs:label", "to": 73}, {"from": 74, "label": "rdf:first", "to": 75}, {"from": 10, "label": "bf:carrier", "to": 76}, {"from": 37, "label": "bf:agent", "to": 70}, {"from": 77, "label": "rdfs:label", "to": 78}, {"from": 4, "label": "\u003chttp://id.loc.gov/ontologies/bflc/encodingLevel\u003e", "to": 79}, {"from": 10, "label": "bf:dimensions", "to": 80}, {"from": 81, "label": "rdf:type", "to": 82}, {"from": 57, "label": "rdf:type", "to": 83}, {"from": 1, "label": "rdfs:label", "to": 84}, {"from": 85, "label": "rdfs:label", "to": 86}, {"from": 10, "label": "bf:extent", "to": 32}, {"from": 0, "label": "bf:contribution", "to": 87}, {"from": 16, "label": "rdf:type", "to": 68}, {"from": 10, "label": "\u003chttp://id.loc.gov/ontologies/bflc/relationship\u003e", "to": 81}, {"from": 4, "label": "bf:creationDate", "to": 12}, {"from": 88, "label": "rdf:type", "to": 89}, {"from": 28, "label": "rdfs:label", "to": 90}, {"from": 10, "label": "\u003chttp://www.w3.org/1999/02/22-rdf-syntax-ns#/type\u003e", "to": 91}, {"from": 70, "label": "rdf:type", "to": 92}, {"from": 10, "label": "bf:note", "to": 26}, {"from": 75, "label": "rdfs:label", "to": 93}, {"from": 57, "label": "bf:agent", "to": 88}, {"from": 79, "label": "rdfs:label", "to": 94}, {"from": 45, "label": "rdf:value", "to": 95}, {"from": 39, "label": "rdfs:label", "to": 96}, {"from": 64, "label": "bf:classificationPortion", "to": 97}, {"from": 0, "label": "bf:language", "to": 39}, {"from": 10, "label": "bf:copyrightDate", "to": 98}, {"from": 87, "label": "bf:agent", "to": 54}, {"from": 11, "label": "\u003chttp://id.loc.gov/ontologies/bflc/catalogerId\u003e", "to": 51}, {"from": 21, "label": "rdfs:label", "to": 99}, {"from": 87, "label": "rdf:type", "to": 83}, {"from": 0, "label": "bf:illustrativeContent", "to": 72}, {"from": 0, "label": "bf:contribution", "to": 57}, {"from": 10, "label": "rdfs:label", "to": 100}, {"from": 0, "label": "bf:classification", "to": 64}, {"from": 32, "label": "rdfs:label", "to": 101}, {"from": 38, "label": "rdfs:label", "to": 102}, {"from": 8, "label": "rdf:type", "to": 103}, {"from": 71, "label": "rdfs:label", "to": 104}, {"from": 45, "label": "rdf:type", "to": 105}, {"from": 29, "label": "rdf:value", "to": 106}, {"from": 10, "label": "bf:issuance", "to": 14}, {"from": 45, "label": "bf:source", "to": 52}, {"from": 10, "label": "bf:identifiedBy", "to": 34}, {"from": 107, "label": "rdfs:label", "to": 108}, {"from": 4, "label": "bf:descriptionAuthentication", "to": 77}, {"from": 64, "label": "bf:itemPortion", "to": 109}, {"from": 11, "label": "bf:descriptionAuthentication", "to": 77}, {"from": 81, "label": "bf:hasEquivalent", "to": 110}, {"from": 88, "label": "rdfs:label", "to": 111}, {"from": 4, "label": "sinopia:hasResourceTemplate", "to": 66}, {"from": 11, "label": "bf:descriptionLanguage", "to": 39}, {"from": 69, "label": "rdfs:label", "to": 112}, {"from": 29, "label": "rdf:type", "to": 113}, {"from": 10, "label": "bf:provisionActivity", "to": 37}, {"from": 4, "label": "rdf:type", "to": 13}, {"from": 10, "label": "bf:media", "to": 85}, {"from": 76, "label": "rdfs:label", "to": 114}, {"from": 28, "label": "rdf:type", "to": 115}, {"from": 1, "label": "rdf:type", "to": 116}, {"from": 74, "label": "rdf:rest", "to": 42}, {"from": 0, "label": "bf:hasInstance", "to": 10}, {"from": 42, "label": "rdf:rest", "to": 48}, {"from": 52, "label": "rdfs:label", "to": 117}, {"from": 70, "label": "bf:agent", "to": 30}, {"from": 59, "label": "rdfs:label", "to": 118}, {"from": 0, "label": "bf:subject", "to": 74}, {"from": 48, "label": "rdf:first", "to": 107}, {"from": 11, "label": "\u003chttp://id.loc.gov/ontologies/bflc/encodingLevel\u003e", "to": 79}, {"from": 9, "label": "rdf:type", "to": 119}, {"from": 9, "label": "rdf:value", "to": 120}, {"from": 40, "label": "rdfs:label", "to": 121}, {"from": 11, "label": "bf:descriptionConventions", "to": 69}, {"from": 0, "label": "bf:colorContent", "to": 43}, {"from": 54, "label": "rdf:type", "to": 89}]);
+
+        // adding nodes and edges to the graph
+        data = {nodes: nodes, edges: edges};
+
+        var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": false,
+            "type": "continuous"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "forceAtlas2Based": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.01,
+            "damping": 0.4,
+            "gravitationalConstant": -50,
+            "springConstant": 0.08,
+            "springLength": 100
+        },
+        "solver": "forceAtlas2Based",
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+        
+        
+
+        
+
+        network = new vis.Network(container, data, options);
+	 
+        
+
+
+        
+        network.on("stabilizationProgress", function(params) {
+      		document.getElementById('loadingBar').removeAttribute("style");
+	        var maxWidth = 496;
+	        var minWidth = 20;
+	        var widthFactor = params.iterations/params.total;
+	        var width = Math.max(minWidth,maxWidth * widthFactor);
+
+	        document.getElementById('bar').style.width = width + 'px';
+	        document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+	    });
+	    network.once("stabilizationIterationsDone", function() {
+	        document.getElementById('text').innerHTML = '100%';
+	        document.getElementById('bar').style.width = '496px';
+	        document.getElementById('loadingBar').style.opacity = 0;
+	        // really clean the dom element
+	        setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+	    });
+        
+
+        return network;
+
+    }
+
+    drawGraph();
+
+</script>
+</body>
+</html>
