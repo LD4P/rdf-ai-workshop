@@ -18,7 +18,7 @@ NAMESPACES = {
 
 SINOPIA = rdflib.Namespace("http://sinopia.io/vocabulary/")
 
-def kg(api_uri: str, name: str = "Sinopia Knowledge Graph") -> kglab.KnowledgeGraph:
+def create_kg(api_uri: str, name: str = "Sinopia Knowledge Graph") -> kglab.KnowledgeGraph:
     rdf_graph = harvest(api_uri)
     return kglab.KnowledgeGraph(
         name =  name,
@@ -37,8 +37,10 @@ def harvest(api_url: str) -> Dict:
         if not 'data' in resource:
             print(f"\n{resource.get('uri')} missing data")
             return
-        jsonld = json.dumps(resource.pop("data")).encode()
+        data = validate_urls(resource.pop("data"))     
+        jsonld = json.dumps(data).encode()
         try:
+
             graph.parse(data=jsonld, format="json-ld")
         except Exception as error:
             print(f"Failed to parse {resource}\n{error}")
@@ -63,3 +65,15 @@ def harvest(api_url: str) -> Dict:
             add_resource(row)
         next_link = new_next
     return graph
+
+def validate_urls(data: list) -> str:
+    # Not a great kludge to fix invalid urls
+#     temp_graph = rdlib.Graph()
+#     temp_graph.parse(data=json.loads(data), format='json-ld')
+#     for sub, obj in temp_graph.subject_objects():
+#         if isinstance(sub, rdflib.URIRef):
+#             if not rdflib.term._is_valid_url(str(sub)):
+                
+    
+    
+    
