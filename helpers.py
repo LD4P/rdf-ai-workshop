@@ -1,6 +1,9 @@
 import json
+import io
 from datetime import datetime
 from typing import Dict, List, Optional
+from zipfile import ZipFile
+
 
 import pandas as pd
 
@@ -18,15 +21,18 @@ NAMESPACES = {
 
 SINOPIA = rdflib.Namespace("http://sinopia.io/vocabulary/")
 
-def create_kg(api_uri: str, name: str = "Sinopia Knowledge Graph") -> kglab.KnowledgeGraph:
-    rdf_graph = harvest(api_uri)
+def create_kg(sinopia_uri: str, name: str = "Sinopia Knowledge Graph") -> kglab.KnowledgeGraph:
+    if sinopia_uri.endswith("zip"):
+        rdf_graph = from_zip_url(sinopia_uri)
+    else:
+         rdf_graph = harvest(sinopia_uri)
     return kglab.KnowledgeGraph(
         name =  name,
         namespaces=NAMESPACES,
         import_graph=rdf_graph
     )
 
-def harvest(api_url: str) -> Dict:
+def harvest(api_url: str) -> rdflib.Graph:
     """Takes a Sinopia API endpoint URI, extracts each resource and
     template, and returns a dictionary with two lists, a resources and a
     templates, and the total number of resources harvested from the api.
@@ -37,10 +43,8 @@ def harvest(api_url: str) -> Dict:
         if not 'data' in resource:
             print(f"\n{resource.get('uri')} missing data")
             return
-        data = validate_urls(resource.pop("data"))     
-        jsonld = json.dumps(data).encode()
+        jsonld = json.dumps(resource.pop("data")).encode()
         try:
-
             graph.parse(data=jsonld, format="json-ld")
         except Exception as error:
             print(f"Failed to parse {resource}\n{error}")
@@ -66,14 +70,27 @@ def harvest(api_url: str) -> Dict:
         next_link = new_next
     return graph
 
-def validate_urls(data: list) -> str:
-    # Not a great kludge to fix invalid urls
-#     temp_graph = rdlib.Graph()
-#     temp_graph.parse(data=json.loads(data), format='json-ld')
-#     for sub, obj in temp_graph.subject_objects():
-#         if isinstance(sub, rdflib.URIRef):
-#             if not rdflib.term._is_valid_url(str(sub)):
-                
-    
-    
-    
+def from_zip_url(zip_url: str) -> rdflib.Graph:
+    """Takes the url to the export zip file from a Sinopia environment, extracts all
+    RDF and returns an instance of the Knowledge Graph
+
+    @param zip_url -- URL to the zip export file
+    """
+    zip_result = requests.get(zip_url)
+    graph = rdflib.Graph()
+    with ZipFile(io.BytesIO(zip_result.content)) as zip_file:
+        for zip_info in zip_file.infolist():
+            if zip_info.file_size < 1 or zip_info.filename.endswith('log'):
+                continue
+            with zip_file.open(zip_info) as zip_extract:
+                raw_data = zip_extract.read()
+                try:
+                    resource = json.loads(raw_data)
+                    if 'data' in resource:
+                        graph.parse(data=json.dumps(resource.get('data')), format='json-ld')
+                except  Exception as error:
+                    print(f"Failed to parse {zip_info.filename}\n{error}")
+
+    return graph
+        
+                 
