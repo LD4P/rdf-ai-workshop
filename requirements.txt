@@ -1,0 +1,5 @@
+kglab
+requests
+rdflib-jsonld
+fastai
+spacy
