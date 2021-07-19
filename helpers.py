@@ -23,6 +23,7 @@ NAMESPACES = {
     "sinopia": "http://sinopia.io/vocabulary/"
 }
 
+BIBFRAME = rdflib.Namespace("http://id.loc.gov/ontologies/bibframe/")
 SINOPIA = rdflib.Namespace("http://sinopia.io/vocabulary/")
 
 def create_kg(sinopia_uri: str, name: str = "Sinopia Knowledge Graph") -> kglab.KnowledgeGraph:
@@ -144,14 +145,9 @@ def create_splits(df, valid_pct=0.2):
     for row_values in df.groupby("template").indices.values():
         # Shuffle group
         random.shuffle(row_values)
-        # Randomly add first or second to each train and valid lists to 
-        # guarantee label is in both
-        if random.random() <= 0.5:
-            train.append(row_values[0])
-            valid.append(row_values[1])
-        else:
-            train.append(row_values[1])
-            valid.append(row_values[0])
+        # Ensure template is present in both training and validation data
+        train.append(row_values[0])
+        valid.append(row_values[1])
         # Iterate through the rest of the group and add to train and valid lists
         # based on valid percentage
         for i, v in enumerate(row_values):
@@ -163,4 +159,52 @@ def create_splits(df, valid_pct=0.2):
                 train.append(v)
     return (train, valid)
           
-              
+def get_matches(text: str, 
+                nlp, 
+                matcher, 
+                lookup_df,
+                max_matches=None):
+    """Returns matches for a text string using a  spaCy phrase matcher
+    
+    @param text -- Text
+    @param nlp -- spaCy NLP pipeline
+    @param matcher -- spaCy Phrase Matcher
+    @param lookup_df -- source Pandas dataframe used to populate phrase matcher
+    @param max_matches -- maximum matches to return, default is None (returns everything)
+    """
+    matches = []
+    doc = nlp(text)
+    for match_id, _start, _end in matcher(doc):
+        lookup_url = nlp.vocab.strings[match_id]
+        lookup_name = lookup_df[lookup_df['URL'] == lookup_url].iloc[0]["name"]
+        matches.append((lookup_url, lookup_name))
+        if max_matches is not None and len(matches) >= max_matches:
+            break
+    return matches
+        
+
+VIAF_URL_TEMPLATE = """http://www.viaf.org/viaf/search?query=cql.any+=+"{term}"&maximumRecords=5&httpAccept=application/json"""
+
+def viaf_people_search(term):
+    viaf_url = VIAF_URL_TEMPLATE.format(term=term)
+    viaf_result = requests.get(viaf_url)
+    output = {}
+    if viaf_result.status_code < 300:
+        records = viaf_result.json().get('searchRetrieveResponse', {}).get('records', [])
+        for row in records:
+            name_type = row["record"]["recordData"]["nameType"]
+            if not name_type.startswith("Personal"):
+                continue
+            viaf_authority_url = row["record"]["recordData"]["Document"]["@about"]
+            main_headings = row["record"]["recordData"]["mainHeadings"]["data"]
+            if isinstance(main_headings, list):
+                first_heading = main_headings[0]
+            else:
+                first_heading = main_headings
+            if viaf_authority_url in output:
+                output[viaf_authority_url].append(first_heading.get('text'))
+            else:
+                output[viaf_authority_url] = [first_heading.get('text')]
+    return output
+            
+    

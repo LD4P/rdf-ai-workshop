@@ -3,3 +3,4 @@ requests
 rdflib-jsonld
 fastai
 spacy
+transformers
