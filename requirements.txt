@@ -5,3 +5,5 @@ fastai
 spacy
 transformers
 ipywidgets
+nb_black
+jupyter_contrib_nbextensions
