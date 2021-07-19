@@ -4,3 +4,4 @@ rdflib-jsonld
 fastai
 spacy
 transformers
+ipywidgets

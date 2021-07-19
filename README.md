@@ -2,6 +2,8 @@
 Presentation and source code for Jeremy Nelson's workshop, *Visualizing and Training Sinopia 
 Linked Data with Pandas, spaCy, and PyTorch* at the 02021 LD4 Conference.
 
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jermnelson/ld4-2021-workshop/HEAD)
+
 This workshop provides participants the opportunity to explore Sinopia's Linked Data resources 
 through a machine-learning lens. 
 
@@ -11,7 +13,8 @@ through a machine-learning lens.
 
 -  The second part of the workshop will take 
    the created dataframes and investigate using a custom spaCy Named Entity Recognition pipeline
-   for tagging descriptions with FAST subject headings. 
+   for tagging descriptions with FAST subject headings. The last part will use HuggingFace 
+   transformers for NER and summarization pipelines.  
 
--  The last part of the workshop will apply PyTorch and HuggingFace transformers to the 
+-  The last part of the workshop will apply FastAI and PyTorch to the 
    dataframes for further exploration by the participants. 
