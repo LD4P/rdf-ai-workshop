@@ -104,7 +104,7 @@ def preprocess(jsonld: str, resource_uri: str) -> str:
     basepath = f"{resource_parts.path}#"
     graph = graph.skolemize(authority=resource_uri,
                             basepath=basepath)
-    return graph.serialize(format='nt').decode()
+    return graph.serialize(format='nt')
 
 def fix_invalid_url(uri: rdflib.URIRef) -> rdflib.URIRef:
     """Parses URI and attempts to quote parts in order to create valid URI
