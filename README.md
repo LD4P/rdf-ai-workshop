@@ -9,17 +9,18 @@ This workshop provides participants the opportunity to explore [Sinopia][SINOPIA
     harvesting RDF from [Sinopia's API][SINOPIA_API], and analyzing and visualizing the RDF using [Pandas][PANDAS]. 
 1.  The second section takes the [Panda dataframes][PANDA_DF] from the first-section 
     and then build a custom [spaCy][SPACY] Named Entity Recognition (NER) pipeline for tagging descriptions with [FAST][FAST] subject headings. 
-1.  The third section will use [HuggingFace][HF] transformers for NER and 
-    summarization pipelines using [PyTorch][PYTRCH]. The final section focuses on broader machine learning challenges and will introduce participants to [Model Cards][MODELCRDS] and 
+    We will use [HuggingFace transformers][HF] for NER and summarization pipelines using [PyTorch][PYTRCH]. 
+1. The final section focuses on broader machine learning challenges and will introduce participants to [Model Cards][MODELCRDS] and 
     [Data Statements][DATA_STMTS] for describing the work they did during the workshop. 
 
-[DATA_STMTS]:
-[FAST]:
-[HF]: 
+[DATA_STMTS]: https://techpolicylab.uw.edu/data-statements/
+[FAST]: https://fast.oclc.org/searchfast/
+[HF]: https://huggingface.co/docs/transformers/index
 [IPYNB]: https://jupyter.org/
+[MODELCRDS]: https://arxiv.org/pdf/1810.03993.pdf
 [PANDAS]: https://pandas.pydata.org/
 [PANDA_DF]: https://pandas.pydata.org/docs/reference/frame.htmlspa
-[PYTRCH]: 
+[PYTRCH]: https://pytorch.org/
 [SINOPIA]: https://sinopia.io/
 [SINOPIA_API]: https://ld4p.github.io/sinopia_api/
-[SPACY]: 
+[SPACY]: https://spacy.io/
