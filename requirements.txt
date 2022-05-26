@@ -6,4 +6,5 @@ spacy
 transformers
 ipywidgets
 nb_black
+jupyterlab
 jupyter_contrib_nbextensions
