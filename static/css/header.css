@@ -1,0 +1,32 @@
+.editor-navbar {
+  background-image: url("./editorheaderbg.png");
+}
+
+/** For header tabs **/
+.navbar.editor-navtabs {
+  color: #2f2424;
+}
+.navbar.editor-navtabs a.nav-link {
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0rem;
+}
+.navbar.editor-navtabs a.nav-link.active {
+  font-weight: 900;
+  text-decoration: underline;
+}
+.navbar.editor-navtabs a.nav-link:hover {
+  color: #2f2424;
+}
+.navbar.editor-navtabs .hover {
+  background-color: transparent;
+}
+.navbar.editor-navtabs a {
+  color: #2f2424;
+  font-weight: 500;
+}
+.navbar.editor-navtabs #searchType {
+  width: 19rem;
+}
+
+/*# sourceMappingURL=header.css.map */
