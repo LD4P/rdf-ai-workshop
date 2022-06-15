@@ -9,8 +9,11 @@
     <py-env>
       - pandas
       - markdown
+      - spacy
       - './static/wheels/rdflib-6.1.1-py3-none-any.whl'
       - './static/wheels/pyshacl-0.19.0-py3-none-any.whl'
+      - paths:
+        - ./helpers.py
     </py-env>
 
   </head>
@@ -18,7 +21,7 @@
     <div class="editor-navbar">
        <h3>LD4 2022 Conference Workshop</h3>
        <h4>Visualizing and Training Machine Learning Models with Sinopia Linked Data</h4>
-       <h1>Analysis of RDF</h1>
+       <h1>NLP with spaCy</h1>
     </div>
     <div class="container">
       <div class="row">
@@ -32,6 +35,21 @@ The functionality provided by [spaCy][SPACY] allows us to quickly extract parts-
         </div>
       </div>
     </div>
+    <py-script>
+     # Hack to load rdflib
+     setattr(sys.stderr, 'isatty', lambda : True)
+      
+     from helpers import render_mkdwn
+
+     intro = Element('intro')
+     render_mkdwn(intro)
+
+    </py-script>
+   <div id="err-div"></div>
+   <py-box widths="1/2;1/2">
+    <py-repl id="my-repl" auto-generate="true" std-out="output" std-err="err-div"> </py-repl>
+        <div id="output" class="p-4"></div>
+    </py-box>
     <div class="container">
      <div class="btn-group" role="group" aria-label="Basic example">
        <a href="/setup.html" class="btn btn-success btn-lg"><i class="bi bi-arrow-left-square-fill"></i> Setup and Loading RDF</a>
