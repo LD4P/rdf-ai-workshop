@@ -1,5 +1,4 @@
 import markdown
-import rdflib
 
 def render_mkdwn(element):
     raw_mkdwn = element.element.innerHTML

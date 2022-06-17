@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>LD4 Conference Workshop - Visualizing and Training Machine Learning Models with Sinopia Linked Data - Analisys</title>
+    <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
+    <link href="static/css/main.css" rel="stylesheet" />
+    <link href="static/css/header.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
+    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+    <py-env>
+      - pandas
+      - markdown
+      - './static/wheels/rdflib-6.1.1-py3-none-any.whl'
+      - './static/wheels/pyshacl-0.19.0-py3-none-any.whl'
+      - paths:
+        - ./helpers.py
+        - ./sinopia_api_widget.py
+    </py-env>
+    <py-register-widget src="./widgets.py" name="py-list" klass="PyList"></py-register-widget>
+
+  </head>
+  <body>
+    <div class="editor-navbar">
+       <h3>LD4 2022 Conference Workshop</h3>
+       <h4>Visualizing and Training Machine Learning Models with Sinopia Linked Data</h4>
+       <h1>Loading, Analysis, and Visualizing Sinopia RDF</h1>
+    </div>
+    <py-script>
+     import helpers
+     from sinopia_api_widget import sinopia_api as sinopia_env_widget
+
+     helpers.render_mkdwn(Element('intro'))
+     helpers.render_mkdwn(Element('pandas'))
+
+     sinopia_env_widget(Element("sinopia-api-group-widget"))
+    </py-script>
+    <div class="container">
+      <div class="row">
+        <div id="intro" class="col bg-white ms-auto">
+## Sinopia Group Knowledge Graph
+We can use [Sinopia API](https://ld4p.github.io/sinopia_api/#tag/resources/paths/~1resource/get) to only retrieve resources associated
+with a Sinopia group. The general URL pattern is 
+
+`https://api.{env?}.sinopia.io/resource?group={name}`. 
+
+Some examples:
+
+- Retrieve PCC resources from Sinopia stage environment: `https://api.stage.sinopia.io/resource?group=pcc`
+- Retrieve Yale resources from Sinopia production: `https://api.sinopia.io/resource?group=yale`
+
+To assist in generating the group API URL, we will use the `sinopia_api` widget below
+
+        </div>
+        <div id="pandas" class="col">
+## Pandas Data Structures
+A popular open-source Python library called [`pandas`][PANDAS], provides data structures tools,
+for analyzing, summarizing, transforming, and visualizing information. Pandas
+
+[PANDAS]: https://pandas.pydata.org/
+
+       </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <h3>Sinopia Environment API URL</h3>
+          <div id="sinopia-api-group-widget"></div>
+        </div>
+      </div> 
+    </div>  
+  </body>
+</html>
