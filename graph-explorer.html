@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>LD4 Conference Workshop - Visualizing and Training Machine Learning Models with Sinopia Linked Data - Analisys</title>
+    <title>LD4 Conference Workshop - Visualizing and Training Machine Learning Models with Sinopia Linked Data - Graph Explorer</title>
     <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
     <link href="static/css/main.css" rel="stylesheet" />
     <link href="static/css/header.css" rel="stylesheet" />
@@ -16,8 +16,15 @@
         - ./helpers.py
         - ./sinopia_api_widget.py
     </py-env>
-    <py-register-widget src="./widgets.py" name="py-list" klass="PyList"></py-register-widget>
-
+    <py-script>
+      import helpers
+      from sinopia_api_widget import sinopia_api as sinopia_env_widget
+ 
+      helpers.render_mkdwn(Element('intro'))
+      helpers.render_mkdwn(Element('pandas'))
+ 
+      sinopia_env_widget(Element("sinopia-api-group-widget"))
+     </py-script>
   </head>
   <body>
     <div class="editor-navbar">
@@ -25,15 +32,7 @@
        <h4>Visualizing and Training Machine Learning Models with Sinopia Linked Data</h4>
        <h1>Loading, Analysis, and Visualizing Sinopia RDF</h1>
     </div>
-    <py-script>
-     import helpers
-     from sinopia_api_widget import sinopia_api as sinopia_env_widget
-
-     helpers.render_mkdwn(Element('intro'))
-     helpers.render_mkdwn(Element('pandas'))
-
-     sinopia_env_widget(Element("sinopia-api-group-widget"))
-    </py-script>
+ 
     <div class="container">
       <div class="row">
         <div id="intro" class="col bg-white ms-auto">

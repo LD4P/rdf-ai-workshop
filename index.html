@@ -2,19 +2,9 @@
 <html>
   <head>
     <title>LD4 Conference Workshop - Visualizing and Training Machine Learning Models with Sinopia Linked Data</title>
-    <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
     <link href="static/css/main.css" rel="stylesheet" />
     <link href="static/css/header.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
-    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
-    <py-env>
-      - lxml
-      - numpy
-      - matplotlib
-      - markdown
-      - './static/wheels/rdflib-6.1.1-py3-none-any.whl'
-      - './static/wheels/pyshacl-0.19.0-py3-none-any.whl'
-    </py-env>
   </head>
   <body> 
     <div class="editor-navbar">
@@ -24,41 +14,37 @@
     <div class="container">
       <div class="row">
         <div id="introduction" class="col bg-white ms-auto">
-## Introduction
-This work-shop will introduce you to downloading and exploring the RDF created in the Sinopia Linked Data Editing environment. We will then build upon these Sinopia data artifacts we created by applying various machine learning technologies and techniques for such tasks as FAST subject heading and template classification. Finally, we will discuss Data Statements and Model Cards and how to apply them to the work
-we did today.
+          <h2>Introduction</h2>
+          <p>
+            This work-shop will introduce you to downloading and exploring the RDF 
+            created in the Sinopia Linked Data Editing environment. We will then 
+            build upon these Sinopia data artifacts we created by applying various 
+            machine learning technologies and techniques for such tasks as FAST 
+            subject heading and template classification. Finally, we will discuss 
+            Data Statements and Model Cards and how to apply them to the work
+             we did today.
+          </p>
         </div>
         <div id="schedule" class="col bg-white">
-### Workshop Schedule
-This workshop will be broken down into four parts, with breaks during the sessions.
-
-#### 1. Introduction, Setup, Analysis, and Visualization of Sinopia RDF
-- [Setup](/setup.html)
-- [Loading RDF into Graphs](/loading.html)
-- [Analysis of RDF with Pandas](/analysis.html)
-- [Visualization of RDF](/visualization.html)
-
-#### 2. Using spaCy and HuggingFace Natural Language Processing (NLP)
-
-#### 3. PyTorch with FastAI 
-
-#### 4. Increasing transparency with Model Cards and Data Statements
+          <h3>Workshop Schedule</h3>
+          <p>This workshop will be broken down into four parts, with breaks during the sessions.</p>
+          <h4>1. Introduction, Setup, Analysis, and Visualization of Sinopia RDF</h4>
+          <ul>
+          <li><a href="graph-explorer.html">RDF Graph Explorer</a>
+            <ol>
+              <li><a href="graph-explorer.html#loading">Loading RDF into Graphs</a></li>
+              <li><a href="graph-explorer.html#analysis.html">Analysis of RDF with Pandas</a></li>
+              <li><a href="graph-explorer.html#visualization.html">Visualization of RDF</a></li>
+            </ol>
+          </ul>
+          <h4>2. Using spaCy and HuggingFace Natural Language Processing (NLP)</h4>
+          <h4>3. PyTorch with FastAI</h4>
+          <h4>4. Increasing transparency with Model Cards and Data Statements</h4>
         </div>
       </div>
     </div>
-    <a href="/setup.html" class="btn btn-primary btn-lg">Setup and Loading RDF <i class="bi bi-arrow-right-square-fill"></i></a>
-    <py-script> 
-    import markdown
-
-    def render_mkdwn(element):
-        raw_mkdwn = element.element.innerHTML
-        element.clear()
-        element.element.innerHTML = markdown.markdown(raw_mkdwn)
-
-    intro = Element('introduction')
-    schedule = Element('schedule')
-    render_mkdwn(intro)
-    render_mkdwn(schedule)
-    </py-script> 
+    <div class="container">
+      <a href="graph-explorer.html" class="btn btn-primary btn-lg">RDF Graph Explorer<i class="bi bi-arrow-right-square-fill"></i></a>
+    </div>
   </body>
 </html>

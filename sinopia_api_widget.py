@@ -21,6 +21,12 @@ def _environment_checkbox(env):
     div.appendChild(label)
     return div
 
+def _group_select(options: list=[]):
+    select = js.document.createElement("select")
+    select.setAttribute("id", "env-groups")
+    return select
+
+
 
 def sinopia_api(widget_div):
     widget_div.element.classList.add("row")
@@ -35,4 +41,4 @@ def sinopia_api(widget_div):
         env_column.appendChild(env_checkbox)
         
     widget_div.element.appendChild(env_column)
-    
+    widget_div.element.appendChild(_group_select())
