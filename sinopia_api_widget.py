@@ -22,15 +22,23 @@ def _environment_checkbox(env):
     return div
 
 def _group_select(options: list=[]):
+    wrapper_div = js.document.createElement("div")
+    wrapper_div.classList.add("col")
     select = js.document.createElement("select")
     select.setAttribute("id", "env-groups")
-    return select
+    all_option = js.document.createElement("option")
+    all_option.setAttribute("value", "all")
+    all_option.innerHTML = "All"
+    select.appendChild(all_option)
+    wrapper_div.appendChild(select)
+    return wrapper_div
 
 
 
 def sinopia_api(widget_div):
     widget_div.element.classList.add("row")
     env_column = js.document.createElement("div")
+    env_column.classList.add("col")
 
     for env in [
         ("Development", "https://api.development.sinopia.io/"),

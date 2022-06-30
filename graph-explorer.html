@@ -20,8 +20,9 @@
       import helpers
       from sinopia_api_widget import sinopia_api as sinopia_env_widget
  
-      helpers.render_mkdwn(Element('intro'))
-      helpers.render_mkdwn(Element('pandas'))
+      for element_id in ['intro', 'pandas', 'retrieve-rdf']:
+        helpers.render_mkdwn(Element(element_id))
+
  
       sinopia_env_widget(Element("sinopia-api-group-widget"))
      </py-script>
@@ -52,7 +53,7 @@ To assist in generating the group API URL, we will use the `sinopia_api` widget 
         </div>
         <div id="pandas" class="col">
 ## Pandas Data Structures
-A popular open-source Python library called [`pandas`][PANDAS], provides data structures tools,
+A popular open-source Python library called [`pandas`][PANDAS], provides data structures tools
 for analyzing, summarizing, transforming, and visualizing information. Pandas
 
 [PANDAS]: https://pandas.pydata.org/
@@ -65,6 +66,33 @@ for analyzing, summarizing, transforming, and visualizing information. Pandas
           <div id="sinopia-api-group-widget"></div>
         </div>
       </div> 
-    </div>  
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <div id="retrieve-rdf">
+  ## Retrieving all RDF from Sinopia Stage Environment
+  Using the `sinopia_api` widget to generate the Sinopia API url for all groups, we can then use a helper function, `create_kg` that will download each resource, extract the RDF, and then return the Knowledge Graph after all of the RDF resources have been parsed.
+
+  **NOTE**: Instead of taking 2+ minutes to run this function, you can just load the existing stage knowledge graph with the following commands:
+
+          </div>
+        </div>
+        <div class="col">
+          <pre>
+  stage_kg = kglab.KnowledgeGraph()
+  stage_kg.load_jsonld("data/stage.json")
+          </pre>
+        </div>
+      </div>
+    </div>
+    <footer class="footer mt-auto py-3 bg-light">
+      <div id="err-div" class="bg-red text-white text-center border-t-4"></div>
+      <py-box widths="2/3;1/3">
+        <py-repl id="graph-repl" auto-generate="true" std-out="output" std-err="err-div"> </py-repl>
+        <div id="output" class="p-4"></div>
+      </py-box>
+      
+    </footer> 
   </body>
 </html>
