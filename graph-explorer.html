@@ -6,22 +6,44 @@
     <link href="static/css/main.css" rel="stylesheet" />
     <link href="static/css/header.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+    <style>
+      strong {
+        font-weight: 800;
+      }
+    </style>
     <py-env>
       - pandas
       - markdown
+      - Jinja2
       - './static/wheels/rdflib-6.1.1-py3-none-any.whl'
       - './static/wheels/pyshacl-0.19.0-py3-none-any.whl'
       - paths:
         - ./helpers.py
+        - ./load_rdf_widget.py
         - ./sinopia_api_widget.py
     </py-env>
     <py-script>
+      import sys
       import helpers
+      from pyodide import create_proxy
+
+      # Hack to load rdflib
+      setattr(sys.stderr, 'isatty', lambda : True)
+
+      import rdflib
       from sinopia_api_widget import sinopia_api as sinopia_env_widget
- 
-      for element_id in ['intro', 'pandas', 'retrieve-rdf']:
-        helpers.render_mkdwn(Element(element_id))
+      from load_rdf_widget import bibframe as bibframe_widget
+
+      for element_id in ['intro',
+                         'pandas',
+                         'retrieve-rdf',
+                         'bf-work-instance-item-rdf',
+                         'bf-collect-urls',
+                         'bf-namespace-graph',
+                         'bf-download-parse']:
+          helpers.render_mkdwn(Element(element_id))
 
  
       sinopia_env_widget(Element("sinopia-api-group-widget"))
@@ -33,7 +55,68 @@
        <h4>Visualizing and Training Machine Learning Models with Sinopia Linked Data</h4>
        <h1>Loading, Analysis, and Visualizing Sinopia RDF</h1>
     </div>
- 
+    <div class="float-end sticky-top">
+      <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#graph-repl-modal">
+        <img width="64" alt="Python-logo-notext" src="python-repl.svg">         
+      </button>
+    </div>
+    <div class="container">
+      <div id="bf-work-instance-item-rdf">
+## PCC BIBFRAME Work-Instance-Item Graph
+We can use [Sinopia API](https://github.com/ld4p/sinopia_api) to construct a small 
+RDF graph made up of a [BIBFRAME](https://bibframe.org/) Work, Instance, and Item 
+and then create a knowledge graph for analysis and visualization of the entities 
+along with their properties.
+      </div>
+      <div class="row">
+        <div class="col">
+          <div id="bf-collect-urls">
+### Step One: Collect Sinopia URLs
+First we will the following resources from Sinopia's stage environment and then parse the RDF
+contained in the resulting JSON.
+          </div>
+          
+        </div>
+        <div id"></div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div id="bf-namespace-graph">
+### Step Two: Create RDF Namespaces and Graph
+
+Here we create two namespaces for the BIBFRAME 
+and Sinopia vocabularies and bind them to the new Sinopia graph.            
+          </div>
+        </div>
+        <div class="col">
+          <pre><code>
+BIBFRAME = rdflib.Namespace("http://id.loc.gov/ontologies/bibframe/")
+SINOPIA = rdflib.Namespace("http://sinopia.io/vocabulary/")
+
+sinopia_pcc_graph = rdflib.Graph()
+sinopia_pcc_graph.namespace_manager.bind("bf", BIBFRAME)
+sinopia_pcc_graph.namespace_manager.bind("sinopia", SINOPIA)            
+          </code></pre>
+      </div>
+    </div>
+    <div class="row">
+        <div class="col">
+          <div id="bf-download-parse">
+### Step Three: Download and Parse RDF into the Graph
+
+We now loop through all of the URLs in the list of Sinopia URLs, 
+query the Sinopia Stage API endpoint for these resources, and add the 
+JSON-LD to the graph.
+          </div>
+        </div>
+        <div class="col">
+          <pre><code>
+print(f"Starting triples in our RDF graph {len(sinopia_pcc_graph)}")
+
+          </code></pre>
+        </div>
+    </div>
+
     <div class="container">
       <div class="row">
         <div id="intro" class="col bg-white ms-auto">
@@ -60,39 +143,59 @@ for analyzing, summarizing, transforming, and visualizing information. Pandas
 
        </div>
       </div>
-      <div class="row">
-        <div class="col">
-          <h3>Sinopia Environment API URL</h3>
-          <div id="sinopia-api-group-widget"></div>
-        </div>
-      </div> 
+    </div>
+    <div class="container" style="width: 60%">
+      <div class="border border-primary bg-light" style="margin: .5em; padding: .5em">
+        <h3>Sinopia Environment API URL</h3>
+        <div id="sinopia-api-group-widget"></div>
+      </div>
     </div>
     <div class="container">
       <div class="row">
         <div class="col">
           <div id="retrieve-rdf">
-  ## Retrieving all RDF from Sinopia Stage Environment
-  Using the `sinopia_api` widget to generate the Sinopia API url for all groups, we can then use a helper function, `create_kg` that will download each resource, extract the RDF, and then return the Knowledge Graph after all of the RDF resources have been parsed.
+## Retrieving all RDF from Sinopia Stage Environment
+Using the `sinopia_api` widget to generate the Sinopia API url for all groups, 
+we can then use a helper function, `create_kg` that will download each resource, 
+extract the RDF, and then return the Knowledge Graph after all of the RDF 
+resources have been parsed.
 
-  **NOTE**: Instead of taking 2+ minutes to run this function, you can just load the existing stage knowledge graph with the following commands:
+*NOTE*: Instead of taking 2+ minutes to run this function, you can just load 
+the existing stage knowledge graph with the following commands:
 
           </div>
         </div>
         <div class="col">
-          <pre>
-  stage_kg = kglab.KnowledgeGraph()
-  stage_kg.load_jsonld("data/stage.json")
-          </pre>
+          <pre><code>
+>> stage_kg = kglab.KnowledgeGraph()
+>> stage_kg.load_jsonld("data/stage.json")
+        </code></pre>
         </div>
       </div>
     </div>
-    <footer class="footer mt-auto py-3 bg-light">
-      <div id="err-div" class="bg-red text-white text-center border-t-4"></div>
-      <py-box widths="2/3;1/3">
-        <py-repl id="graph-repl" auto-generate="true" std-out="output" std-err="err-div"> </py-repl>
-        <div id="output" class="p-4"></div>
-      </py-box>
-      
-    </footer> 
+    <div class="modal fade" id="graph-repl-modal" tabindex="-1" aria-labelledby="graph-repl-modal-title" style="display: none;" aria-hidden="true">
+      <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="graph-repl-modal-title">Graph Explorer - Python REPL</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="sticky-top py-3 bg-light">
+              <div id="err-div" class="bg-red text-blue text-center border-t-4"></div>
+              <py-box widths="2/3;1/3">
+                <py-repl id="graph-repl" auto-generate="true" std-out="output" std-err="err-div">print("Hello")</py-repl>
+                <div id="output" class="p-4"></div>
+              </py-box>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </body>
 </html>
