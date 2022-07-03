@@ -1,6 +1,47 @@
 import json
+from functools import cache
 
 import js
+from pyodide import create_proxy
+from pyodide.http import open_url
+
+
+def _generate_url(event):
+    radio_env = js.document.querySelector("input[type='radio']:checked")
+    group_url_div = js.document.querySelector("#sinopia-group-url")
+    group_url_div.innerHTML = ""
+    group_url = f"{radio_env.id}resource"
+    if not event.target.value.startswith("all"):
+        group_url = f"{group_url}?group={event.target.value}"
+    group_anchor = js.document.createElement("a")
+    group_anchor.setAttribute("href", group_url)
+    group_anchor.innerText = group_url
+    group_url_div.appendChild(group_anchor)
+
+
+@cache
+def _get_groups(sinopia_api: str):
+    groups_url = f"{sinopia_api}groups/"
+    result = open_url(groups_url)
+    data = json.loads(result.getvalue())["data"]
+    groups = [("All", "all")]
+    for row in data:
+        groups.append((row["label"], row["id"]))
+    return sorted(groups, key=lambda y: y[0])
+
+
+def _on_load_groups(event):
+    group_url_div = js.document.querySelector("#sinopia-group-url")
+    group_url_div.innerHTML = ""
+    group_select = js.document.querySelector("#env-groups")
+    group_select.innerHTML = ""
+    groups = _get_groups(event.target.id)
+    for group in groups:
+        option = js.document.createElement("option")
+        option.setAttribute("value", group[1])
+        option.innerText = group[0]
+        group_select.appendChild(option)
+
 
 def _environment_checkbox(env):
     div = js.document.createElement("div")
@@ -11,8 +52,7 @@ def _environment_checkbox(env):
     radio.setAttribute("name", "sinopia_env")
     radio.setAttribute("id", ident)
     radio.classList.add("form-check-input")
-    if env[0].startswith("Development"):
-        radio.setAttribute("checked", "")
+    radio.addEventListener("change", create_proxy(_on_load_groups))
     div.appendChild(radio)
     label = js.document.createElement("label", env[0])
     label.setAttribute("for", ident)
@@ -26,10 +66,9 @@ def _group_select(options: list=[]):
     wrapper_div.classList.add("col")
     select = js.document.createElement("select")
     select.setAttribute("id", "env-groups")
-    all_option = js.document.createElement("option")
-    all_option.setAttribute("value", "all")
-    all_option.innerHTML = "All"
-    select.appendChild(all_option)
+    select.setAttribute("size", 5)
+
+    select.addEventListener("change", create_proxy(_generate_url))
     wrapper_div.appendChild(select)
     return wrapper_div
 
@@ -50,3 +89,7 @@ def sinopia_api(widget_div):
         
     widget_div.element.appendChild(env_column)
     widget_div.element.appendChild(_group_select())
+    output_div = js.document.createElement("div")
+    output_div.setAttribute("id", "sinopia-group-url")
+    widget_div.element.appendChild(output_div)
+
