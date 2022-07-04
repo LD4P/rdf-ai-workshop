@@ -26,27 +26,37 @@
     </py-env>
     <py-script>
       import sys
-      import helpers
-      from pyodide import create_proxy
-
       # Hack to load rdflib
       setattr(sys.stderr, 'isatty', lambda : True)
 
+      from pyodide import create_proxy
+      import helpers
+
       import rdflib
+
+
+      BIBFRAME = rdflib.Namespace("http://id.loc.gov/ontologies/bibframe/")
+      SINOPIA = rdflib.Namespace("http://sinopia.io/vocabulary/")
+
       from sinopia_api_widget import sinopia_api as sinopia_env_widget
       from load_rdf_widget import bibframe as bibframe_widget
+      from load_rdf_widget import bibframe_sparql as bf_sparql_widget
 
       for element_id in ['intro',
                          'pandas',
                          'retrieve-rdf',
-                         'bf-work-instance-item-rdf',
-                         'bf-collect-urls',
-                         'bf-namespace-graph',
-                         'bf-download-parse']:
-          helpers.render_mkdwn(Element(element_id))
+                         'bf-work-instance-item-rdf']:
+          helpers.render_markdown(Element(element_id))
 
  
       sinopia_env_widget(Element("sinopia-api-group-widget"))
+      entities = [ 
+        "https://api.stage.sinopia.io/resource/6861fc10-0213-4dfc-b1a0-7df975d235dd",
+        "https://api.stage.sinopia.io/resource/986d673d-f006-44ab-8bf7-b92b279fddfa",
+        "https://api.stage.sinopia.io/resource/16061ffa-147a-4b67-9a12-0990964f32d4"
+      ]
+      bibframe_widget("bibframe-widget", entities)
+      bf_sparql_widget("bf-sparql-query")
      </py-script>
   </head>
   <body>
@@ -70,33 +80,20 @@ along with their properties.
       </div>
       <div class="row">
         <div class="col">
-          <div id="bf-collect-urls">
-### Step One: Collect Sinopia URLs
-First we will the following resources from Sinopia's stage environment and then parse the RDF
-contained in the resulting JSON.
-          </div>
-          
+            <h3>Step One: Build RDF Graph from Sinopia URLs</h3>
+            <div id="bibframe-widget"></div>
         </div>
-        <div id"></div>
+        <div class="col">
+          <div id="summarize-work-instance-item"></div>
+        </div>
       </div>
       <div class="row">
         <div class="col">
-          <div id="bf-namespace-graph">
-### Step Two: Create RDF Namespaces and Graph
-
-Here we create two namespaces for the BIBFRAME 
-and Sinopia vocabularies and bind them to the new Sinopia graph.            
-          </div>
+            <h3>Step Two: Query Graph</h3>
+            <div id="bf-sparql-query"></div>
         </div>
         <div class="col">
-          <pre><code>
-BIBFRAME = rdflib.Namespace("http://id.loc.gov/ontologies/bibframe/")
-SINOPIA = rdflib.Namespace("http://sinopia.io/vocabulary/")
-
-sinopia_pcc_graph = rdflib.Graph()
-sinopia_pcc_graph.namespace_manager.bind("bf", BIBFRAME)
-sinopia_pcc_graph.namespace_manager.bind("sinopia", SINOPIA)            
-          </code></pre>
+          <div id="bf-sparql-results"></div>
       </div>
     </div>
     <div class="row">
