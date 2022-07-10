@@ -2,7 +2,7 @@
 Presentation and source code for Jeremy Nelson's workshop, *Visualizing and Training Sinopia 
 Linked Data with Pandas, spaCy, and PyTorch* at the 02021 LD4 Conference.
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jermnelson/ld4-2021-workshop/HEAD)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/LD4P/rdf-ai-workshop/HEAD)
 
 This workshop provides participants the opportunity to explore Sinopia's Linked Data resources 
 through a machine-learning lens. 
