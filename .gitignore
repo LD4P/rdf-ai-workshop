@@ -1,2 +1,10 @@
 __pycache__*
 .ipynb_checkpoints*
+data/*.json
+data/*.csv
+data/*.txt
+data/*.pk*
+models/*
+ld4-env*
+*swp
+*DS_Store
