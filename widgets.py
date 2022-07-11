@@ -2,7 +2,7 @@ import json
 import logging
 import pathlib
 
-from functools import cache
+#from functools import cache
 
 import requests
 import ipywidgets as widgets
@@ -16,7 +16,7 @@ data_dropdown = widgets.Dropdown(
 )
 
 
-@cache
+# @cache
 def get_groups(sinopia_api: str) -> list:
     groups_url = f"{sinopia_api}groups/"
     groups_result = requests.get(groups_url)
